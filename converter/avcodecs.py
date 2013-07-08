@@ -129,6 +129,7 @@ class VideoCodec(BaseCodec):
         'mode': str,
         'src_width': int,
         'src_height': int,
+        'extra_filters': list
     }
 
     def _aspect_corrections(self, sw, sh, w, h, mode):
@@ -261,6 +262,14 @@ class VideoCodec(BaseCodec):
 
             if ow and oh:
                 optlist.extend(['-aspect', '%d:%d' % (ow, oh)])
+
+        extra_filters = ','.join(safe.get('extra_filters', []))
+
+        if extra_filters:
+            if filters:
+                filters += extra_filters
+            else:
+                filters = extra_filters
 
         if filters:
             optlist.extend(['-vf', filters])
