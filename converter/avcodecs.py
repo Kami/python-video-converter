@@ -106,6 +106,7 @@ class VideoCodec(BaseCodec):
             * pad - pad with black bars
       * src_width (int) - source width
       * src_height (int) - source height
+      * skip_subtitles (bool) - True to skip subtitle decoding
 
     Aspect preserval mode is only used if both source
     and both destination sizes are specified. If source
@@ -129,7 +130,8 @@ class VideoCodec(BaseCodec):
         'mode': str,
         'src_width': int,
         'src_height': int,
-        'extra_filters': list
+        'extra_filters': list,
+        'skip_subtitles': bool
     }
 
     def _aspect_corrections(self, sw, sh, w, h, mode):
@@ -273,6 +275,10 @@ class VideoCodec(BaseCodec):
 
         if filters:
             optlist.extend(['-vf', filters])
+
+        # TODO: This should really be part of a separate SubtitlesStream
+        if safe.get('skip_subtitles', False):
+            optlist.extend(['-sn'])
 
         optlist.extend(self._codec_specific_produce_ffmpeg_list(safe))
         return optlist
